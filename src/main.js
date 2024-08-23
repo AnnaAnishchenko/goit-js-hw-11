@@ -12,6 +12,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const searchFormEl = document.querySelector('.js-search-form');
 const galleryEl = document.querySelector('.js-gallery');
+const loaderEl = document.querySelector('.js-loader');
 
 const createGalleryCardTemplate = imgInfo => {
   return `
@@ -37,6 +38,16 @@ let lightbox = new SimpleLightbox('.js-gallery a', {
   captionDelay: 250,
 });
 
+//функції для показу  завантажувача
+const showLoader = () => {
+  loaderEl.style.display = 'block';
+};
+
+//функції для приховування завантажувача
+const hideLoader = () => {
+  loaderEl.style.display = 'none';
+};
+
 const onSearchFormSubmit = event => {
   // відміна дії за замовчуванням
   event.preventDefault();
@@ -52,6 +63,9 @@ const onSearchFormSubmit = event => {
 
   // Очищення галереї перед новим пошуком
   galleryEl.innerHTML = '';
+
+  // викликаємо завантажувач
+  showLoader();
 
   // Запит на сервер
   fetch(
@@ -93,6 +107,10 @@ const onSearchFormSubmit = event => {
         title: 'Error',
         message: `An error occurred: ${err.message}`,
       });
+    })
+    .finally(() => {
+      // Приховуємо завантажувач після завершення запиту
+      hideLoader();
     });
 };
 
