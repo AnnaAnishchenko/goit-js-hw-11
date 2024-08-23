@@ -1,5 +1,8 @@
 //pixabay.com/api/
 
+import { createGalleryCardTemplate } from './js/render-functions.js';
+import { fetchPhotos } from './js/pixebay-api.js';
+
 // Описаний у документації
 import iziToast from 'izitoast';
 // Додатковий імпорт стилів
@@ -13,24 +16,6 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const searchFormEl = document.querySelector('.js-search-form');
 const galleryEl = document.querySelector('.js-gallery');
 const loaderEl = document.querySelector('.js-loader');
-
-const createGalleryCardTemplate = imgInfo => {
-  return `
-  <li class="gallery-card">
-  <a href="${imgInfo.largeImageURL}">
-     <img class="gallery-img"
-      src="${imgInfo.webformatURL}" 
-      alt="${imgInfo.tags}" />
-  </a>
-    <div class="info">
-      <p><b>Likes:</b> ${imgInfo.likes}</p>
-      <p><b>Views:</b> ${imgInfo.views}</p>
-      <p><b>Comments:</b> ${imgInfo.comments}</p>
-      <p><b>Downloads:</b> ${imgInfo.downloads}</p>
-    </div>
-  </li>
-  `;
-};
 
 // Створюємо екземпляр SimpleLightbox
 let lightbox = new SimpleLightbox('.js-gallery a', {
@@ -61,23 +46,11 @@ const onSearchFormSubmit = event => {
     return;
   }
 
-  // Очищення галереї перед новим пошуком
-  galleryEl.innerHTML = '';
-
   // викликаємо завантажувач
   showLoader();
 
   // Запит на сервер
-  fetch(
-    `https://pixabay.com/api/?key=45552769-3540ba49dba2ab2d34c825df8&q=${searchedValue}&image_type=photo&orientation=horizontal&safesearch=true&per_page=20`
-  )
-    // перевірка
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
+  fetchPhotos(searchedValue)
     // отримуємо дані
     .then(data => {
       // Перевірка на відсутність результатів
@@ -87,6 +60,11 @@ const onSearchFormSubmit = event => {
           message:
             'Sorry, there are no images matching your search query. Please try again!',
         });
+
+        // Очищення галереї перед новим пошуком
+        galleryEl.innerHTML = '';
+        searchFormEl.reset();
+
         return;
       }
 
