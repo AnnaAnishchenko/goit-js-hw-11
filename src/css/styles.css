@@ -58,11 +58,27 @@
 }
 
 .gallery-card {
-  width: calc((100% - 60px) / 4);
+  width: calc((100% - 60px) / 3);
 }
 
 .gallery-img {
   width: 100%;
   height: 380px;
   object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-wrap: nowrap;
+  width: calc((100% - 20px) / 4);
+  height: 48px;
+  padding: 10px;
+  text-align: center;
+}
+.info p {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin: 0;
+  font-size: 16px;
 }

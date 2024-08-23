@@ -1,7 +1,14 @@
 //pixabay.com/api/
 
+// Описаний у документації
 import iziToast from 'izitoast';
+// Додатковий імпорт стилів
 import 'izitoast/dist/css/iziToast.min.css';
+
+// Описаний у документації
+import SimpleLightbox from 'simplelightbox';
+// Додатковий імпорт стилів
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const searchFormEl = document.querySelector('.js-search-form');
 const galleryEl = document.querySelector('.js-gallery');
@@ -9,9 +16,11 @@ const galleryEl = document.querySelector('.js-gallery');
 const createGalleryCardTemplate = imgInfo => {
   return `
   <li class="gallery-card">
-    <img class="gallery-img"
-    src="${imgInfo.webformatURL}" 
-    alt="${imgInfo.tags}" />
+  <a href="${imgInfo.largeImageURL}">
+     <img class="gallery-img"
+      src="${imgInfo.webformatURL}" 
+      alt="${imgInfo.tags}" />
+  </a>
     <div class="info">
       <p><b>Likes:</b> ${imgInfo.likes}</p>
       <p><b>Views:</b> ${imgInfo.views}</p>
@@ -21,6 +30,12 @@ const createGalleryCardTemplate = imgInfo => {
   </li>
   `;
 };
+
+// Створюємо екземпляр SimpleLightbox
+let lightbox = new SimpleLightbox('.js-gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 const onSearchFormSubmit = event => {
   // відміна дії за замовчуванням
@@ -40,7 +55,7 @@ const onSearchFormSubmit = event => {
 
   // Запит на сервер
   fetch(
-    `https://pixabay.com/api/?key=45552769-3540ba49dba2ab2d34c825df8&query=${searchedValue}&image_type=photo&orientation=horizontal&safesearch=true&per_page=20`
+    `https://pixabay.com/api/?key=45552769-3540ba49dba2ab2d34c825df8&q=${searchedValue}&image_type=photo&orientation=horizontal&safesearch=true&per_page=20`
   )
     // перевірка
     .then(response => {
@@ -68,6 +83,9 @@ const onSearchFormSubmit = event => {
 
       // Додаємо в розмітку HTML
       galleryEl.innerHTML = galleryCardsTemplate;
+
+      // Оновлюємо галерею SimpleLightbox
+      lightbox.refresh();
     })
     // ловимо помилку
     .catch(err => {
